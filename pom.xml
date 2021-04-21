@@ -1,0 +1,139 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.github.noronhaa</groupId>
+  <artifactId>ee-test-automation-framework</artifactId>
+
+  <name>ee-test-automation-framework</name>
+
+  <version>1</version>
+
+  <properties>
+    <!-- Default thread count and groups to run -->
+    <threads>1</threads>
+    <groups/>
+
+    <!-- Versions from frameworkium-core -->
+    <aspectj.version>1.9.6</aspectj.version>
+    <allure.version>2.12.1</allure.version>
+
+    <!-- Prevent encoding issues -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
+
+  <!-- Makes mvn versions:display-plugin-updates faster -->
+  <prerequisites>
+    <maven>3.3.9</maven>
+  </prerequisites>
+
+  <dependencies>
+<!--    <dependency>-->
+<!--      <groupId>com.github.frameworkium</groupId>-->
+<!--      <artifactId>frameworkium-core</artifactId>-->
+<!--      <version>3.0.1</version>-->
+<!--    </dependency>-->
+    <dependency>
+      <groupId>com.github.noronhaa</groupId>
+      <artifactId>frameworkium-ui</artifactId>
+      <version>3.0-BETA3</version>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <version>4.3.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.truth</groupId>
+      <artifactId>truth</artifactId>
+      <version>1.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.20</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Compile all the lovely Java code -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <release>11</release>
+        </configuration>
+      </plugin>
+
+      <!-- Run all of your lovely tests -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M3</version>
+        <configuration>
+          <!-- See here for how TestNG uses these:
+          http://testng.org/doc/documentation-main.html#parallel-tests -->
+          <parallel>methods</parallel>
+          <threadCount>${threads}</threadCount>
+
+          <systemPropertyVariables>
+            <screenshotDirectory>
+              ${project.build.directory}/screenshots
+            </screenshotDirectory>
+            <!-- Required for writing the allure results -->
+            <allure.results.directory>
+              ${project.build.directory}/allure-results
+            </allure.results.directory>
+          </systemPropertyVariables>
+
+          <!-- This will only run Classes ending in Test or Tests-->
+          <includes>
+            <include>**/HotelBookingTest.java</include>
+<!--            <include>**/*Tests.java</include>-->
+          </includes>
+          <!-- TestNG Groups to run, can be specified on the command line -->
+          <groups>${groups}</groups>
+
+          <!-- Required for AspectJ to work to enable Allure reporting -->
+          <argLine>
+            -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+          </argLine>
+          <failIfNoTests>true</failIfNoTests>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <!-- Allure 2 reporting. Use mvn allure:report to generate the report -->
+      <plugin>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-maven</artifactId>
+        <version>2.10.0</version>
+        <configuration>
+          <!-- Keep version in sync with dependencies -->
+          <reportVersion>${allure.version}</reportVersion>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
