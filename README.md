@@ -1,8 +1,10 @@
 # Hotel Booking Form Automation Framework
 
-This is a Test Automation Framework for writing front end UI web automated tests using Webdriver and TestNG and back end
-API tests using RestAssured. It utilises 
-Frameworkium-UI, a framework for writing maintainable Front End tests using Selenium Webdriver. Abstracting away the 
+This is a Test Automation Framework testing a hotel booking form website, it has been built to demonstrate capabilities writing front end UI web automated tests using Webdriver and TestNG and back end
+API tests using RestAssured. 
+
+It utilises 
+[Frameworkium-UI](https://github.com/noronhaa/frameworkium-ui), a framework for writing maintainable Front End tests using Selenium Webdriver. Abstracting away the 
 complexities allowing us to get up and running writing clean maintainable tests straight away without having to reinvent the wheel.
 
 
@@ -23,7 +25,7 @@ The following tools will need to be instal
 ## Getting Started
 ### Running Tests
 
-After setting up [apache maven][mvn], open the `ee-test-automation-examples` directory in a 
+After setting up [apache maven][mvn], either clone or download the automation framework. Open the `ee-test-automation-examples` directory in a 
 terminal/command prompt and run `mvn clean verify` to run the example tests using Firefox.
 
 You will need the [geckodriver][geckodriver] on your path if you are using 
@@ -134,10 +136,7 @@ simply running:
 mvn allure:report 
 ```
 
-## Further Information
 
-Frameworkium sets you up for other stuff too - check out the
-[guidance page][guidance] for further info.
 
 [status-svg]: https://travis-ci.org/Frameworkium/frameworkium-examples.svg?branch=master
 [status]: https://travis-ci.org/Frameworkium/frameworkium-examples
