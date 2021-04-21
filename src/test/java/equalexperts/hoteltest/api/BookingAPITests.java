@@ -1,27 +1,23 @@
 package equalexperts.hoteltest.api;
 
-//import com.frameworkium.api.tests.BaseAPITest;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import equalexperts.hoteltest.BookerEndpoint;
 import equalexperts.hoteltest.dto.Booking;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-public class APITests  {
+public class BookingAPITests {
 
     private static final String APPLICATION_JSON = "application/json";
 
-    //todo
-//    @BeforeClass
-//    public void ensure_site_is_up_by_using_ping_service() {
-//        Assert.assertEquals(new PingService().ping(),"Created");
-//    }
+    @BeforeClass
+    public void ensure_site_is_up_by_using_ping_service() {
+        Assert.assertEquals(new PingService().ping(),"Created");
+    }
 
 
     protected RequestSpecification getRequestSpec() {

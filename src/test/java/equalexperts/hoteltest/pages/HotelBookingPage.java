@@ -1,10 +1,11 @@
 package equalexperts.hoteltest.pages;
 
-//import com.frameworkium.core.ui.annotations.Visible;
-//import com.frameworkium.core.ui.pages.BasePage;
 import com.frameworkium.ui.pages.PageFactory;
 import com.frameworkium.ui.pages.BasePage;
 import com.frameworkium.ui.annotations.Visible;
+import equalexperts.hoteltest.dto.Booking;
+import equalexperts.hoteltest.utils.BookingDateUtils;
+import io.qameta.allure.Step;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 public class HotelBookingPage extends BasePage<HotelBookingPage> {
 
+    public static final String VALUE_ATTRIBUTE = "value";
 
     @Visible
     @FindBy(id = "bookings")
@@ -150,14 +152,16 @@ public class HotelBookingPage extends BasePage<HotelBookingPage> {
         return rows.get(expectedTotalRows -1);
     }
 
-    //todo
+    /**
+     * Clicks the Save button to submit the form booking without waiting for new row to be created
+     *
+     * Total number of rows is calculated before submission, after submission of the booking form an explicit wait to
+     * make sure the total number of rows in the table is the same.
+     */
     public void clickSaveButtonExpectingNoNewRow(){
         int rowsBefore = getNumberOfRows();
-        int expectedTotalRows = rowsBefore + 1;
         this.saveButton.click();
-        int nextRow = expectedTotalRows;
-        wait.until(ExpectedConditions.invisibilityOfElementLocated((By.cssSelector("#bookings > .row:nth-of-type("+nextRow+")"))));
-        wait.until(ExpectedConditions.not(ExpectedConditions.numberOfElementsToBe(tableRows,expectedTotalRows)));
+        wait.until(ExpectedConditions.numberOfElementsToBe(tableRows,rowsBefore));
     }
 
     /**
@@ -196,6 +200,67 @@ public class HotelBookingPage extends BasePage<HotelBookingPage> {
     public void deleteRow(WebElement row){
         getRow(row).clickDeleteButton();
         wait.until(ExpectedConditions.invisibilityOfAllElements(row));
+    }
+
+    /**
+     * Fills out the fields in for a new booking entry
+     * @param booking object with the data to fill the form entry with
+     * @return HotelBookingPage page object class
+     */
+    public HotelBookingPage fillOutBookingRow(Booking booking) {
+        BookingDateUtils checkin = new BookingDateUtils(booking.bookingdates.checkin);
+        BookingDateUtils checkout = new BookingDateUtils(booking.bookingdates.checkout);
+
+        enterIntoFirstNameField(booking.firstname) ;
+        enterIntoLastNameField(booking.lastname);
+        enterIntoPriceField(booking.totalprice);
+        selectDepositPaidDropdown(booking.depositpaid);
+        selectCheckinDate(
+            checkin.getDay(),
+            checkin.getMonth(),
+            checkin.getYear());
+        selectCheckoutDate(
+            checkout.getDay(),
+            checkout.getMonth(),
+            checkout.getYear());
+
+        return this;
+
+    }
+
+    /**
+     * @return text in the lastname input field
+     */
+    public String getLastnameInput() {
+        return lastname.getAttribute(VALUE_ATTRIBUTE);
+    }
+
+    /**
+     * @return text in the firstname input field
+     */
+    public String getFirstnameInput() {
+        return firstname.getAttribute(VALUE_ATTRIBUTE);
+    }
+
+    /**
+     * @return text in the price input field
+     */
+    public String getPriceInput() {
+        return totalprice.getAttribute(VALUE_ATTRIBUTE);
+    }
+
+    /**
+     * @return text in the checkin input field
+     */
+    public String getCheckinInput() {
+        return checkin.getAttribute(VALUE_ATTRIBUTE);
+    }
+
+    /**
+     * @return text in the checkout input field
+     */
+    public String getCheckoutInput() {
+        return checkout.getAttribute(VALUE_ATTRIBUTE);
     }
 
 }

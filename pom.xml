@@ -15,7 +15,6 @@
     <threads>1</threads>
     <groups/>
 
-    <!-- Versions from frameworkium-core -->
     <aspectj.version>1.9.6</aspectj.version>
     <allure.version>2.12.1</allure.version>
 
@@ -37,14 +36,14 @@
   </prerequisites>
 
   <dependencies>
-<!--    <dependency>-->
-<!--      <groupId>com.github.frameworkium</groupId>-->
-<!--      <artifactId>frameworkium-core</artifactId>-->
-<!--      <version>3.0.1</version>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>com.github.noronhaa</groupId>
       <artifactId>frameworkium-ui</artifactId>
+      <version>3.0-BETA3</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.noronhaa</groupId>
+      <artifactId>frameworkium-reporting</artifactId>
       <version>3.0-BETA3</version>
     </dependency>
     <dependency>
@@ -102,8 +101,9 @@
 
           <!-- This will only run Classes ending in Test or Tests-->
           <includes>
-            <include>**/HotelBookingTest.java</include>
-<!--            <include>**/*Tests.java</include>-->
+<!--            <include>**/HotelBookingTest.java</include>-->
+            <include>**/*Test.java</include>
+            <include>**/*Tests.java</include>
           </includes>
           <!-- TestNG Groups to run, can be specified on the command line -->
           <groups>${groups}</groups>

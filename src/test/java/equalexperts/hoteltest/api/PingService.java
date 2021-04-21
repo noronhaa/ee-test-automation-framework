@@ -6,8 +6,11 @@ import equalexperts.hoteltest.BookerEndpoint;
 public class PingService  {
 
     public String ping() {
-        return RestAssured.get(BookerEndpoint.PING.getUrl())
-                .body().asString();
+        return RestAssured.given()
+                .baseUri(BookerEndpoint.BASE_URI.getUrl())
+                .get(BookerEndpoint.PING.getUrl())
+                .body()
+                .asString();
     }
 
 }

@@ -12,6 +12,8 @@ import static org.testng.Assert.*;
 
 public class HotelBookingTest extends BaseUITest {
 
+    private static final String EMPTY = "";
+
     @Test()
     public final void createBookingTest() {
 
@@ -40,6 +42,7 @@ public class HotelBookingTest extends BaseUITest {
                     checkout.getYear())
                 .clickSaveButtonExpectingRowCreation();
 
+
         int bookingRowsPresentAfter = bookingPage.getNumberOfRows();
 
         assertEquals((bookingRowsPresentBefore + 1), bookingRowsPresentAfter,
@@ -64,25 +67,13 @@ public class HotelBookingTest extends BaseUITest {
 
         //Create test data
         Booking bookingData = Booking.newInstance();
-        BookingDateUtils checkin = new BookingDateUtils(bookingData.bookingdates.checkin);
-        BookingDateUtils checkout = new BookingDateUtils(bookingData.bookingdates.checkout);
 
         var bookingPage = HotelBookingPage.open();
 
         //Create new Booking
-        WebElement createdRow =  bookingPage
-                .enterIntoFirstNameField(bookingData.firstname)
-                .enterIntoLastNameField(bookingData.lastname)
-                .enterIntoPriceField(bookingData.totalprice)
-                .selectDepositPaidDropdown(bookingData.depositpaid)
-                .selectCheckinDate(
-                        checkin.getDay(),
-                        checkin.getMonth(),
-                        checkin.getYear())
-                .selectCheckoutDate(
-                        checkout.getDay(),
-                        checkout.getMonth(),
-                        checkout.getYear())
+        WebElement createdRow =
+                bookingPage
+                .fillOutBookingRow(bookingData)
                 .then()
                 .clickSaveButtonExpectingRowCreation();
 
@@ -107,38 +98,76 @@ public class HotelBookingTest extends BaseUITest {
     }
 
     @Test()
-    public final void bookingNotCreatedWithMissingFirstName() {
+    public final void bookingNotCreatedWithMissingFirstNameTest() {
 
         //Create test data
         Booking bookingData = Booking.newInstance();
         bookingData.firstname = "";
-        BookingDateUtils checkin = new BookingDateUtils(bookingData.bookingdates.checkin);
-        BookingDateUtils checkout = new BookingDateUtils(bookingData.bookingdates.checkout);
 
         var bookingPage = HotelBookingPage.open();
         int rowsPresent = bookingPage.getNumberOfRows();
 
+        //Create new Booking
+        bookingPage
+                .fillOutBookingRow(bookingData)
+                .then()
+                .clickSaveButtonExpectingNoNewRow();
+
+        int rowsAfter = bookingPage.getNumberOfRows();
+        assertEquals(rowsPresent, rowsAfter);
+
+        assertFalse(bookingPage.getAllLastnamesInBookingTable().contains(bookingData.lastname),
+                String.format("entry '%s' found in booking table that was deleted",bookingData.lastname));
+
+    }
+
+    @Test()
+    public final void inputFieldsNotClearedWhenBookingNotCreatedDueToMissingFieldTest() {
+
+        //Create test data
+        Booking bookingData = Booking.newInstance();
+        bookingData.firstname = "";
+
+        var bookingPage = HotelBookingPage.open();
+        int rowsPresent = bookingPage.getNumberOfRows();
 
         //Create new Booking
         bookingPage
-                .enterIntoFirstNameField(bookingData.firstname)
-                .enterIntoLastNameField(bookingData.lastname)
-                .enterIntoPriceField(bookingData.totalprice)
-                .selectDepositPaidDropdown(bookingData.depositpaid)
-                .selectCheckinDate(
-                        checkin.getDay(),
-                        checkin.getMonth(),
-                        checkin.getYear())
-                .selectCheckoutDate(
-                        checkout.getDay(),
-                        checkout.getMonth(),
-                        checkout.getYear())
+                .fillOutBookingRow(bookingData)
+                .then()
                 .clickSaveButtonExpectingNoNewRow();
 
-
         int rowsAfter = bookingPage.getNumberOfRows();
-
         assertEquals(rowsPresent, rowsAfter);
+
+        assertFalse(bookingPage.getAllLastnamesInBookingTable().contains(bookingData.lastname),
+                String.format("entry '%s' found in booking table that was deleted",bookingData.lastname));
+
+        assertEquals(bookingPage.getLastnameInput(),bookingData.lastname);
+        assertEquals(bookingPage.getPriceInput(),bookingData.totalprice);
+        assertEquals(bookingPage.getCheckinInput(),bookingData.bookingdates.checkin);
+        assertEquals(bookingPage.getCheckoutInput(),bookingData.bookingdates.checkout);
+
+    }
+
+    @Test()
+    public final void inputFieldsAreClearedAfterSuccessfulBookingCreationTest() {
+
+        //Create test data
+        Booking bookingData = Booking.newInstance();
+
+        var bookingPage = HotelBookingPage
+                .open();
+
+            bookingPage
+                .fillOutBookingRow(bookingData)
+                .then()
+                .clickSaveButtonExpectingRowCreation();
+
+        assertEquals(bookingPage.getLastnameInput(),EMPTY);
+        assertEquals(bookingPage.getPriceInput(),EMPTY);
+        assertEquals(bookingPage.getCheckinInput(),EMPTY);
+        assertEquals(bookingPage.getCheckoutInput(),EMPTY);
 
     }
 

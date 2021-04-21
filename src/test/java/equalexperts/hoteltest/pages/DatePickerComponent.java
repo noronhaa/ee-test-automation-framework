@@ -63,7 +63,6 @@ public class DatePickerComponent extends HtmlElement {
                 nextMonthButton.click();
             }
         } else if (monthDiff < 0){
-            //todo ??
             IntStream.range(0, monthDiff).forEach(i -> previousMonthButton.click());
         }
     }
